@@ -11,46 +11,32 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:padding="20dp">
-        <TextView
-            android:id="@+id/tv_expression"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:lines="2"
-            android:maxLines="2"
-            android:textColor="@color/number_color"
-            android:textAlignment="textEnd"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toTopOf="@id/tv_current"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_current"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:maxLines="1"
+            android:layout_height="0dp"
+            android:maxLines="3"
             android:text=""
             android:textAlignment="textEnd"
             android:textColor="@color/white"
-            android:textSize="30sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/tv_result"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:lines="1"
-            android:maxLines="1"
+            android:lines="2"
+            android:maxLines="2"
             android:text=""
             android:textAlignment="textEnd"
             android:textColor="@color/number_color"
-            android:textSize="40sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
@@ -84,7 +70,7 @@
         android:text="^"/>
         <Button
             style="@style/styleBtnOperator"
-            android:text="x"
+            android:text="*"
             android:textAllCaps="false"/>
         <Button
             style="@style/styleBtnOperator"
@@ -135,7 +121,8 @@
             android:text="3" />
         <Button
             style="@style/styleBtnOperator"
-            android:text="⌫"/>
+            android:text="⌫"
+            android:onClick="clickUndo"/>
     </LinearLayout>
     <LinearLayout
         style="@style/styleRow">
@@ -148,7 +135,8 @@
         <Button
             style="@style/styleBtnOperator"
             android:text="Clear"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:onClick="clickClear"/>
         <Button
             style="@style/styleBtnOperator"
             android:text="="
