@@ -21,7 +21,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    private fun addStrings(num1: String, num2: String): String {
+    private fun addStrings(n1: String, n2: String): String {
+        val dot1 = if (!n1.contains(".")) 0 else n1.lastIndexOf(".")
+        val dot2 = if(!n2.contains(".")) 0 else n2.lastIndexOf(".")
+        val dotToEnd1= if(dot1 == 0) 0 else n1.length - 1 - dot1
+        val dotToEnd2= if(dot2 == 0) 0 else n2.length - 1 - dot2
+        val teleBitRight = Math.max(dotToEnd1, dotToEnd2)
+        var num1 = if (dot1 > 0) n1.removeRange(dot1..dot1) else n1
+        var num2 = if (dot2 > 0) n2.removeRange(dot2..dot2) else n2
+
+        val deta1 = teleBitRight - (dotToEnd1)
+        val deta2 = teleBitRight - (dotToEnd2)
+
+        if (deta1 > 0 ) {
+            repeat(deta1) {
+                num1 += "0"
+            }
+        }
+        if (deta2 > 0 ) {
+            repeat(deta2) {
+                num2 += "0"
+            }
+        }
         var lenght1 = num1.length - 1
         var lenght2 = num2.length - 1
         val charArr1 = num1.toCharArray()
@@ -30,16 +51,18 @@ class MainActivity : AppCompatActivity() {
         val sb = StringBuilder()
         var remainder = 0
         while (lenght1 >= 0 || lenght2 >= 0) {
-            val n1 = if (lenght1 >= 0) charArr1[lenght1--] - '0' else 0
-            val n2 = if (lenght2 >= 0) charArr2[lenght2--] - '0' else 0
-            val num = n1 + n2 + remainder // sum may be > 10
+            val no1 = if (lenght1 >= 0) charArr1[lenght1--] - '0' else 0
+            val no2 = if (lenght2 >= 0) charArr2[lenght2--] - '0' else 0
+            val num = no1 + no2 + remainder // sum may be > 10
             remainder = num / 10 // update số nhớ
             sb.append(num % 10) //  Add result to string
         }
         if (remainder > 0) { // last remain add ahead
             sb.append(remainder)
         }
-        return sb.reverse().toString()
+        sb.reverse()
+        if(teleBitRight>0) sb.insert(sb.length - teleBitRight, ".")
+        return sb.toString()
     }
 
     private fun subString(n1: String, n2: String): String {
@@ -273,13 +296,14 @@ class MainActivity : AppCompatActivity() {
         canAddDecimal = true
         canAddOperation = false
     }
-    private val listOperator = listOf("+","-","/","*","^")
+
+    private val listOperator = listOf("+", "-", "/", "*", "^")
     fun clickUndo(view: View) {
         // if last = number -1 // last = operation -3
         if (currentExpression.length - 1 >= 0) {
-            if(listOperator.contains(currentExpression.last().toString())){
-                currentExpression.delete(currentExpression.length - 4,currentExpression.length-1)
-            } else  currentExpression.deleteCharAt(currentExpression.length -1)
+            if (listOperator.contains(currentExpression.last().toString())) {
+                currentExpression.delete(currentExpression.length - 4, currentExpression.length - 1)
+            } else currentExpression.deleteCharAt(currentExpression.length - 1)
         }
         binding.tvCurrent.text = currentExpression
     }
