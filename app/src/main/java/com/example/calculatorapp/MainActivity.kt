@@ -1,11 +1,13 @@
 package com.example.calculatorapp
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.example.calculatorapp.databinding.ActivityMainBinding
 import java.util.*
 
@@ -22,27 +24,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addStrings(n1: String, n2: String): String {
+
+        // calcul dot (.) position and teleBit to Right
         val dot1 = if (!n1.contains(".")) 0 else n1.lastIndexOf(".")
-        val dot2 = if(!n2.contains(".")) 0 else n2.lastIndexOf(".")
-        val dotToEnd1= if(dot1 == 0) 0 else n1.length - 1 - dot1
-        val dotToEnd2= if(dot2 == 0) 0 else n2.length - 1 - dot2
+        val dot2 = if (!n2.contains(".")) 0 else n2.lastIndexOf(".")
+        //pos to end
+        val dotToEnd1 = if (dot1 == 0) 0 else n1.length - 1 - dot1
+        val dotToEnd2 = if (dot2 == 0) 0 else n2.length - 1 - dot2
+        //calcul teleBit was parse
         val teleBitRight = Math.max(dotToEnd1, dotToEnd2)
+        //// remove .
         var num1 = if (dot1 > 0) n1.removeRange(dot1..dot1) else n1
         var num2 = if (dot2 > 0) n2.removeRange(dot2..dot2) else n2
 
         val deta1 = teleBitRight - (dotToEnd1)
         val deta2 = teleBitRight - (dotToEnd2)
-
-        if (deta1 > 0 ) {
+        // and add 0 at end
+        if (deta1 > 0) {
             repeat(deta1) {
                 num1 += "0"
             }
         }
-        if (deta2 > 0 ) {
+        if (deta2 > 0) {
             repeat(deta2) {
                 num2 += "0"
             }
         }
+        //add func like a integer
         var lenght1 = num1.length - 1
         var lenght2 = num2.length - 1
         val charArr1 = num1.toCharArray()
@@ -61,7 +69,8 @@ class MainActivity : AppCompatActivity() {
             sb.append(remainder)
         }
         sb.reverse()
-        if(teleBitRight>0) sb.insert(sb.length - teleBitRight, ".")
+        // restore dot with teleBit allow
+        if (teleBitRight > 0) sb.insert(sb.length - teleBitRight, ".")
         return sb.toString()
     }
 
@@ -183,8 +192,8 @@ class MainActivity : AppCompatActivity() {
             } else { // operator
                 val p2 = stack.pop()
                 val p1 = stack.pop()
-                val absP1 = p1.substring(1)
-                val absP2 = p2.substring(1)
+                val absP1 = if (p1.length > 1) p1.substring(1) else p1
+                val absP2 = if(p2.length> 1) p2.substring(1) else p2
                 when (element) {
                     "+" -> {
                         if (p1.startsWith('-') && p2.startsWith('-')) {
@@ -247,6 +256,23 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+    fun clickBracket(view: View) {
+        if (view is Button) {
+            if (view.text == "(") {
+                canAddDecimal = true
+                canAddOperation = false
+            } else {
+                canAddDecimal = false
+                canAddOperation = true
+            }
+            currentExpression.append(" ")
+            currentExpression.append(view.text)
+            currentExpression.append(" ")
+            binding.tvCurrent.text = currentExpression
+        }
+    }
+
     fun clickNumber(view: View) {
         if (view is Button) {
             if (view.text == ".") {
@@ -266,7 +292,7 @@ class MainActivity : AppCompatActivity() {
         if (view is Button && canAddOperation) {
             Log.e("tag", view.text as String)
             when (view.text) {
-                "(", ")", "+", "-", "/", "*" -> {
+                "+", "-", "/", "*" -> {
                     currentExpression.append(" ")
                     currentExpression.append(view.text)
                     currentExpression.append(" ")
@@ -278,13 +304,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun checkErrorBracket(sb: StringBuilder): Boolean {
+        val comp1 = sb.filter {
+            it == '('
+        }.length
+        val comp2 = sb.filter {
+            it == ')'
+        }.length
+        return comp1 == comp2
+    }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun clickEquals(view: View) {
-        val list: MutableList<String> = (currentExpression.split(" ")) as MutableList<String>
-        list.map {
-            it.trim()
+        if (!checkErrorBracket(currentExpression)) {
+            Toast.makeText(this, "error Expresstion ", Toast.LENGTH_LONG).show()
         }
-        val RPN = ShuntingYard().caculShuntingYard(list)
+//        var sb = StringBuilder()
+//        var size = currentExpression.length
+//        for (i in 1..currentExpression.length){
+//            if(currentExpression[i] == ' ' && currentExpression[i-1]==' '){
+//                currentExpression.deleteAt(i-1)
+//            }
+//        }
+        var list: MutableList<String> = (currentExpression.split(" ")) as MutableList<String>
+        Log.e("tag",list.toString())
+        var list2 = mutableListOf<String>()
+        list.forEach {
+            if(it!=" " && it != "  ") list2.add(it)
+        }
+        Log.e("tag",currentExpression.toString())
+
+        val RPN = ShuntingYard().caculShuntingYard(list2)
+        Log.e("tag",RPN.toString())
         val end = rpnToResult(RPN)
         binding.tvResult.text = end
     }
