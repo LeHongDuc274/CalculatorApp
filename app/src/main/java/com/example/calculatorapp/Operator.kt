@@ -8,7 +8,6 @@ enum class Associativity {
 }
 
 class Operator(val value: String, val associativity: Associativity, val precedence: Int) {
-
     fun comparePrecedence(operator: Operator): Int {
         return (precedence - operator.precedence)
     }
