@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -13,21 +14,20 @@
         android:padding="20dp">
 
         <TextView
-            android:layout_marginVertical="4dp"
             android:id="@+id/tv_current"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text=""
+            android:layout_marginVertical="4dp"
             android:ellipsize="start"
-            android:textColor="@color/white"
-            android:textSize="20sp"
             android:lines="3"
             android:maxLines="3"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/tv_result"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_result"
@@ -45,105 +45,130 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <LinearLayout
-        style="@style/styleRow">
+    <LinearLayout style="@style/styleRow">
+
         <Button
             style="@style/styleBtnOperator"
-            android:text="√" />
+            android:text="History"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:onClick="clickShowHistory"/>
+
         <Button
             style="@style/styleBtnOperator"
-            android:text="%"/>
+            android:text="%" />
+
         <Button
             style="@style/styleBtnOperator"
-            android:text="("
-            android:onClick="clickBracket"/>
+            android:onClick="clickBracket"
+            android:text="(" />
+
         <Button
             style="@style/styleBtnOperator"
-            android:text=")"
-            android:onClick="clickBracket"/>
+            android:onClick="clickBracket"
+            android:text=")" />
     </LinearLayout>
 
-    <LinearLayout
-        style="@style/styleRow">
+    <LinearLayout style="@style/styleRow">
+
         <Button
             style="@style/styleBtnOperator"
-        android:text="Sqr"
-            android:textAllCaps="false"/>
+            android:onClick="clickSqrt"
+            android:text="sqrt"
+            android:textAllCaps="false" />
+
         <Button
             style="@style/styleBtnOperator"
-        android:text="^"/>
+            android:text="^" />
+
         <Button
             style="@style/styleBtnOperator"
             android:text="*"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false" />
+
         <Button
             style="@style/styleBtnOperator"
-            android:text="/"/>
+            android:text="/" />
     </LinearLayout>
 
-    <LinearLayout
-        style="@style/styleRow">
+    <LinearLayout style="@style/styleRow">
+
         <Button
             style="@style/styleBtnNumber"
-        android:text="7" />
+            android:text="7" />
+
         <Button
             style="@style/styleBtnNumber"
-        android:text="8"/>
+            android:text="8" />
+
         <Button
             style="@style/styleBtnNumber"
             android:text="9" />
+
         <Button
             style="@style/styleBtnOperator"
-            android:text="+"/>
+            android:text="+" />
     </LinearLayout>
-    <LinearLayout
-        style="@style/styleRow">
+
+    <LinearLayout style="@style/styleRow">
+
         <Button
             style="@style/styleBtnNumber"
-        android:text="4" />
+            android:text="4" />
+
         <Button
             style="@style/styleBtnNumber"
-        android:text="5"/>
+            android:text="5" />
+
         <Button
             style="@style/styleBtnNumber"
             android:text="6" />
+
         <Button
             style="@style/styleBtnOperator"
             android:text="-"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </LinearLayout>
-    <LinearLayout
-        style="@style/styleRow">
+
+    <LinearLayout style="@style/styleRow">
+
         <Button
             style="@style/styleBtnNumber"
-        android:text="1" />
+            android:text="1" />
+
         <Button
             style="@style/styleBtnNumber"
-        android:text="2"/>
+            android:text="2" />
+
         <Button
             style="@style/styleBtnNumber"
             android:text="3" />
+
         <Button
             style="@style/styleBtnOperator"
-            android:text="⌫"
-            android:onClick="clickUndo"/>
+            android:onClick="clickUndo"
+            android:text="⌫" />
     </LinearLayout>
-    <LinearLayout
-        style="@style/styleRow">
+
+    <LinearLayout style="@style/styleRow">
+
         <Button
             style="@style/styleBtnNumber"
             android:text="0" />
+
         <Button
             style="@style/styleBtnNumber"
-            android:text="."/>
+            android:text="." />
+
         <Button
             style="@style/styleBtnOperator"
+            android:onClick="clickClear"
             android:text="Clear"
-            android:textAllCaps="false"
-            android:onClick="clickClear"/>
+            android:textAllCaps="false" />
+
         <Button
             style="@style/styleBtnOperator"
-            android:text="="
-            android:onClick="clickEquals"/>
+            android:onClick="clickEquals"
+            android:text="=" />
     </LinearLayout>
 </LinearLayout>

@@ -1,5 +1,7 @@
-package com.example.calculatorapp
+package com.example.calculatorapp.math
 
+import com.example.calculatorapp.Associativity
+import com.example.calculatorapp.Operator
 import java.util.*
 
 class ShuntingYard() {
@@ -12,9 +14,10 @@ class ShuntingYard() {
         val MULTIPLICATION = Operator("*", Associativity.LEFT, 5)
         val MODULUS = Operator("%", Associativity.LEFT, 5)
         val POWER = Operator("^", Associativity.RIGHT, 10)
+        val SQRT = Operator("sqrt", Associativity.RIGHT, 10)
 
         val listOperator =
-            mutableListOf(ADDITION, SUBTRACTION, DIVISION, MULTIPLICATION, MODULUS, POWER)
+            mutableListOf(ADDITION, SUBTRACTION, DIVISION, MULTIPLICATION, MODULUS, POWER, SQRT)
 
         OPS = mutableMapOf()
         listOperator.forEach {
@@ -47,7 +50,7 @@ class ShuntingYard() {
                 while (!stack.isEmpty() && !stack.peek().equals("(")) {
                     output.add(stack.pop())
                 }
-                stack.pop()
+                if (stack.isNotEmpty()) stack.pop()
             } else {
                 output.add(token)
             }

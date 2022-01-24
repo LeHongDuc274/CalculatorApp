@@ -1,32 +1,32 @@
 package com.example.calculatorapp
 
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import com.example.calculatorapp.StringMath.Companion.addStrings
-import com.example.calculatorapp.StringMath.Companion.divStrings
-import com.example.calculatorapp.StringMath.Companion.mulStrings
-import com.example.calculatorapp.StringMath.Companion.rpnToResult
-import com.example.calculatorapp.StringMath.Companion.subString
+import androidx.lifecycle.ViewModelProvider
+import com.example.calculatorapp.math.StringMath.Companion.rpnToResult
+import com.example.calculatorapp.data.History
 import com.example.calculatorapp.databinding.ActivityMainBinding
-import java.util.*
-import kotlin.collections.ArrayList
+import com.example.calculatorapp.fragment.HistoryFragment
+import com.example.calculatorapp.math.ShuntingYard
+import com.example.calculatorapp.viewmodel.AppViewModel
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var canAddDecimal = true
     private var canAddOperation = false
+    private var viewModel: AppViewModel? = null
     private var currentExpression = mutableListOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        viewModel = ViewModelProvider(this)[AppViewModel::class.java]
     }
 
     fun clickBracket(view: View) {
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         if (view is Button && canAddOperation) {
             Log.e("tag", view.text as String)
             when (view.text) {
-                "+", "-", "/", "*" -> {
+                "+", "-", "/", "*", "^" -> {
                     currentExpression.add(" " + view.text + " ")
                 }
             }
@@ -70,6 +70,15 @@ class MainActivity : AppCompatActivity() {
             canAddOperation = false
             canAddDecimal = true
         }
+    }
+
+    fun clickSqrt(view: View) {
+        if (view is Button) {
+            currentExpression.add(" " + view.text + " ")
+        }
+        binding.tvCurrent.text = currentExpression.joinToString("")
+        canAddOperation = false
+        canAddDecimal = true
     }
 
     fun checkErrorBracket(sb: MutableList<String>): Boolean {
@@ -91,13 +100,21 @@ class MainActivity : AppCompatActivity() {
         val tempString = currentExpression.joinToString("")
         val items = tempString.trim().split("\\s+".toRegex())
 
-        Log.e("tag2", items.size.toString())
-        Log.e("tag2", items.toString())
-
         val RPN = ShuntingYard().caculShuntingYard(items)
-        Log.e("tag", RPN.toString())
-        val end = rpnToResult(RPN)
-        binding.tvResult.text = end
+        try {
+            val end = rpnToResult(RPN)
+            binding.tvResult.text = end
+            end?.let {
+                insertToDB(tempString, end)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "error expression", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun insertToDB(tempString: String, end: String) {
+        viewModel?.getCount(history = History(tempString, end))
     }
 
     fun clickClear(view: View) {
@@ -114,6 +131,11 @@ class MainActivity : AppCompatActivity() {
             currentExpression.removeLast()
         }
         binding.tvCurrent.text = currentExpression.joinToString("")
+    }
+
+    fun clickShowHistory(view: View) {
+        val fragment = HistoryFragment()
+        fragment.show(supportFragmentManager, "bottom_sheet_frag")
     }
 
     override fun onDestroy() {

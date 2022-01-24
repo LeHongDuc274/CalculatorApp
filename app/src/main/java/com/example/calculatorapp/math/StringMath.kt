@@ -1,4 +1,4 @@
-package com.example.calculatorapp
+package com.example.calculatorapp.math
 
 import android.util.Log
 import java.lang.Exception
@@ -195,7 +195,7 @@ class StringMath {
             while (index < num2.length && num2[index] == '0') {
                 index++
             }
-            if(index==num2.length ||(index == num2.length -1 && num2.contains("."))){
+            if (index == num2.length || (index == num2.length - 1 && num2.contains("."))) {
                 throw Exception("Khong chia dc cho 0.0")
             }
 
@@ -253,7 +253,6 @@ class StringMath {
                     }
                 }
             }
-            Log.e("size", temp.length.toString())
             if (temp.length > accuracy) temp = temp.substring(
                 0,
                 temp.length - accuracy
@@ -271,7 +270,7 @@ class StringMath {
             return temp
         }
 
-        fun rpnToResult(list: List<String>): String {
+        fun rpnToResult(list: List<String>): String? {
             val stack: Stack<String> = Stack()
             val ops = ShuntingYard().OPS
 
@@ -279,60 +278,77 @@ class StringMath {
                 if (!ops.containsKey(element)) { // number -> push stack
                     stack.push(element)
                 } else { // operator
-                    val p2 = stack.pop()
-                    val p1 = stack.pop()
-                    val absP1 = if (p1.length > 1) p1.substring(1) else p1
-                    val absP2 = if (p2.length > 1) p2.substring(1) else p2
-                    when (element) {
-                        "+" -> {
-                            if (p1.startsWith('-') && p2.startsWith('-')) {
-                                var value = addStrings(absP1, absP2)
-                                value = "-" + value
-                                stack.push(value)
-                            } else if (p1.startsWith('-')) {
-                                stack.push(subString(p2, absP1))
-                            } else if (p2.startsWith('-')) {
-                                stack.push(subString(p1, absP2))
-                            } else stack.push(addStrings(p1, p2))
-                        }//stack.push(p1 + p2)
-                        "-" -> {
-                            if (p1.startsWith('-') && p2.startsWith('-')) {
-                                val value = subString(absP2, absP1)
-                                stack.push(value)
-                            } else if (p1.startsWith('-')) {
-                                stack.push("-" + addStrings(absP1, p2))
-                            } else if (p2.startsWith('-')) {
-                                stack.push(addStrings(p1, absP2))
-                            } else stack.push(subString(p1, p2))
-                        }//stack.push(p1 - p2)
-                        "*" -> {
-                            if (p1.startsWith('-') && p2.startsWith('-')) {
-                                var value = mulStrings(absP1, absP2)
-                                stack.push(value)
-                            } else if (p1.startsWith('-')) {
-                                var value = mulStrings(p2, absP1)
-                                value = "-" + value
-                                stack.push(value)
-                            } else if (p2.startsWith('-')) {
-                                var value = mulStrings(p1, absP2)
-                                value = "-" + value
-                                stack.push(value)
-                            } else stack.push(mulStrings(p1, p2))
-                        }// stack.push(p1 * p2)
-                        "/" -> {
-                            if (p1.startsWith('-') && p2.startsWith('-')) {
-                                var value = divStrings(absP1, absP2)
-                                stack.push(value)
-                            } else if (p1.startsWith('-')) {
-                                var value = divStrings(p2, absP1)
-                                value = "-" + value
-                                stack.push(value)
-                            } else if (p2.startsWith('-')) {
-                                var value = divStrings(p1, absP2)
-                                value = "-" + value
-                                stack.push(value)
-                            } else stack.push(divStrings(p1, p2))
-                        }//stack.push(p1 / p2)
+                    if (element == "sqrt") {
+                        val p = stack.pop()
+                        var n = p.toDoubleOrNull()
+                        if (n != null) {
+                            stack.push(Math.sqrt(n).toString())
+                        }
+
+                    } else {
+                        val p2 = stack.pop()
+                        val p1 = stack.pop()
+                        val absP1 = if (p1.length > 1) p1.substring(1) else p1
+                        val absP2 = if (p2.length > 1) p2.substring(1) else p2
+                        when (element) {
+                            "+" -> {
+                                if (p1.startsWith('-') && p2.startsWith('-')) {
+                                    var value = addStrings(absP1, absP2)
+                                    value = "-" + value
+                                    stack.push(value)
+                                } else if (p1.startsWith('-')) {
+                                    stack.push(subString(p2, absP1))
+                                } else if (p2.startsWith('-')) {
+                                    stack.push(subString(p1, absP2))
+                                } else stack.push(addStrings(p1, p2))
+                            }//stack.push(p1 + p2)
+                            "-" -> {
+                                if (p1.startsWith('-') && p2.startsWith('-')) {
+                                    val value = subString(absP2, absP1)
+                                    stack.push(value)
+                                } else if (p1.startsWith('-')) {
+                                    stack.push("-" + addStrings(absP1, p2))
+                                } else if (p2.startsWith('-')) {
+                                    stack.push(addStrings(p1, absP2))
+                                } else stack.push(subString(p1, p2))
+                            }//stack.push(p1 - p2)
+                            "*" -> {
+                                if (p1.startsWith('-') && p2.startsWith('-')) {
+                                    var value = mulStrings(absP1, absP2)
+                                    stack.push(value)
+                                } else if (p1.startsWith('-')) {
+                                    var value = mulStrings(p2, absP1)
+                                    value = "-" + value
+                                    stack.push(value)
+                                } else if (p2.startsWith('-')) {
+                                    var value = mulStrings(p1, absP2)
+                                    value = "-" + value
+                                    stack.push(value)
+                                } else stack.push(mulStrings(p1, p2))
+                            }// stack.push(p1 * p2)
+                            "/" -> {
+                                if (p1.startsWith('-') && p2.startsWith('-')) {
+                                    var value = divStrings(absP1, absP2)
+                                    stack.push(value)
+                                } else if (p1.startsWith('-')) {
+                                    var value = divStrings(p2, absP1)
+                                    value = "-" + value
+                                    stack.push(value)
+                                } else if (p2.startsWith('-')) {
+                                    var value = divStrings(p1, absP2)
+                                    value = "-" + value
+                                    stack.push(value)
+                                } else stack.push(divStrings(p1, p2))
+                            }
+                            "^" -> {
+                                var n1 = p1.toDoubleOrNull()
+                                var n2 = p2.toDoubleOrNull()
+                                if (n1 != null && n2 != null) {
+                                    stack.push(Math.pow(n1, n2).toString())
+                                }
+                            }
+                        }
+                        //stack.push(p1 / p2)
 //                    "+" -> stack.push(p1 + p2)
 //                    "-" -> stack.push(p1 - p2)
 //                    "*" -> stack.push(p1 * p2)
@@ -341,8 +357,79 @@ class StringMath {
                     }
                 }
             }
-            return stack.peek().toString()
+            return if (stack.isEmpty()) null else  stack.peek().toString()
         }
 
+//        fun findSurplus(num1: String, num2 :String){
+//            var n1 = num1
+//            var n2 = num2
+//            var coefficient = 0
+//            var temp = "0"
+//            val compare = n1.length - n2.length
+//            coefficient = compare - 1
+//            if (coefficient > 0) {
+//                repeat(coefficient) {
+//                    n2 = n2.plus("0")
+//                }
+//            } else if (coefficient < 0) {
+//                repeat(-coefficient) {
+//                    n1 = n1.plus("0")
+//                }
+//            }
+//            var sub = n1
+//            for (coe in 0..coefficient) {
+//                //  if (coefficient > 0) {
+//                if (coe > 0) n2 = n2.dropLast(1)
+//                var canMul = true
+//                while (canMul) {
+//                    sub = subString(sub, n2)
+//                    if (sub.startsWith('-')) {
+//                        var absSub = sub.substring(1)
+//                        sub = subString(n2, absSub)
+//                        if (coe < coefficient) {
+//                            temp = mulStrings(temp, "10")
+//                        }
+//                        canMul = false
+//                    } else {
+//                        temp = addStrings(temp, "1")
+//                    }
+//                }
+//            }
+//           var surPlus = if()
+//            return temp
+//        }
+
+
+        fun find2(num2: String): Pair<Int, Int?> {
+            var count = 0
+            var n2 = num2
+            n2 = divStrings(n2, "2", 1)
+            while (!n2.startsWith("0")) {
+                n2 = divStrings(n2, "2", 1)
+                count++
+                Log.e("test1", n2.toString())
+            }
+            Log.e("test1", count.toString())
+
+            val surPlus = subString(num2, n2).toIntOrNull()
+            return Pair(count, surPlus)
+        }
+
+        fun powerStrings(num1: String, num2: String): String {
+            var curNumber: String = num1
+            val pair = find2(num2)
+            val count = pair.first
+            val surPlus = pair.second
+            if (count == 0 && surPlus == 1) return num1
+            if (count == 0 && surPlus == 0) return "1"
+            var prevNum = curNumber
+            for (i in 1..count) {
+                prevNum = curNumber
+                curNumber = mulStrings(curNumber, curNumber)
+                Log.e("test2", curNumber)
+            }
+            curNumber = mulStrings(curNumber, powerStrings(num1, surPlus.toString()))
+            return curNumber
+        }
     }
 }

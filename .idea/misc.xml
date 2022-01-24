@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Trainning/calculator/CalculatorApp/app/src/main/res/layout/activity_main.xml" value="0.19947916666666668" />
+        <entry key="..\:/Trainning/calculator/CalculatorApp/app/src/main/res/layout/fragment_history.xml" value="0.22" />
+        <entry key="..\:/Trainning/calculator/CalculatorApp/app/src/main/res/layout/history_item.xml" value="0.1" />
         <entry key="..\:/Trainning/calculator/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
       </map>
     </option>
