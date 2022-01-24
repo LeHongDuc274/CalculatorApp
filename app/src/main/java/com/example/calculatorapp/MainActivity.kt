@@ -12,6 +12,7 @@ import com.example.calculatorapp.data.History
 import com.example.calculatorapp.databinding.ActivityMainBinding
 import com.example.calculatorapp.fragment.HistoryFragment
 import com.example.calculatorapp.math.ShuntingYard
+import com.example.calculatorapp.math.StringMath.Companion.powerStrings
 import com.example.calculatorapp.viewmodel.AppViewModel
 import java.lang.Exception
 
@@ -110,6 +111,9 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "error expression", Toast.LENGTH_SHORT).show()
         }
+//       val test = powerStrings("2","12345")
+//        Log.e("test",test)
+//        Log.e("test",test.length.toString())
 
     }
 

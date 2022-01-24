@@ -357,7 +357,7 @@ class StringMath {
                     }
                 }
             }
-            return if (stack.isEmpty()) null else  stack.peek().toString()
+            return if (stack.isEmpty()) null else stack.peek().toString()
         }
 
 //        fun findSurplus(num1: String, num2 :String){
@@ -399,36 +399,59 @@ class StringMath {
 //            return temp
 //        }
 
-
-        fun find2(num2: String): Pair<Int, Int?> {
-            var count = 0
-            var n2 = num2
-            n2 = divStrings(n2, "2", 1)
-            while (!n2.startsWith("0")) {
-                n2 = divStrings(n2, "2", 1)
-                count++
-                Log.e("test1", n2.toString())
+        fun toBit(num2: String): List<Int> {
+            val list = mutableListOf<Int>()
+            var n2 = num2.toIntOrNull()
+            if (n2 != null) {
+                do {
+                    list.add(n2!! % 2)
+                    n2 = n2!! / 2
+                } while (n2!! > 0)
             }
-            Log.e("test1", count.toString())
-
-            val surPlus = subString(num2, n2).toIntOrNull()
-            return Pair(count, surPlus)
+            list.reverse()
+            return list
         }
 
+//        fun find2(num2: String): Pair<Int, Int?> {
+//            var count = 0
+//            var n2 = num2
+//            n2 = divStrings(n2, "2", 1)
+//            while (!n2.startsWith("0")) {
+//                n2 = divStrings(n2, "2", 1)
+//                count++
+//                Log.e("test1", n2.toString())
+//            }
+//            Log.e("test1", count.toString())
+//
+//            val surPlus = subString(num2, n2).toIntOrNull()
+//            return Pair(count, surPlus)
+//        }
+
         fun powerStrings(num1: String, num2: String): String {
-            var curNumber: String = num1
-            val pair = find2(num2)
-            val count = pair.first
-            val surPlus = pair.second
-            if (count == 0 && surPlus == 1) return num1
-            if (count == 0 && surPlus == 0) return "1"
-            var prevNum = curNumber
-            for (i in 1..count) {
-                prevNum = curNumber
-                curNumber = mulStrings(curNumber, curNumber)
-                Log.e("test2", curNumber)
+            var curNumber: String = "1"
+            val list = toBit(num2)
+            Log.e("tes",list.toString())
+            val lent = list.size
+            var temList = mutableListOf<String>()
+
+            for (i in 0..list.size - 1) {
+                //
+                if (list[i] == 1){
+                    val coe = lent-i-1
+                    // calcul num1^(2^coe)
+                    var cur :String = num1
+                    repeat(coe){
+                        cur = mulStrings(cur,cur)
+                    }
+                    temList.add(cur)
+                } else{
+                    continue
+                }
             }
-            curNumber = mulStrings(curNumber, powerStrings(num1, surPlus.toString()))
+            var size2 = temList.size
+            for (i in 0..size2-1){
+                curNumber = mulStrings(curNumber,temList[i])
+            }
             return curNumber
         }
     }
