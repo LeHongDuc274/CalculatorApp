@@ -19,122 +19,74 @@ import java.lang.Exception
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-    private var canAddDecimal = true
-    private var canAddOperation = false
-    private var viewModel: AppViewModel? = null
-    private var currentExpression = mutableListOf<String>()
+    lateinit var viewModel: AppViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[AppViewModel::class.java]
+        obverseData()
+    }
+
+    private fun obverseData() {
+        viewModel.textResult.observe(this){
+            binding.tvResult.text = it
+        }
+        viewModel.textExpression.observe(this){
+            binding.tvCurrent.text = it
+        }
+        viewModel.message.observe(this){
+            showToast(it)
+        }
+    }
+
+    private fun showToast(st: String?) {
+        st?.let {
+            Toast.makeText(this,st,Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun clickBracket(view: View) {
         if (view is Button) {
-            if (view.text == "(") {
-                canAddDecimal = true
-                canAddOperation = false
-            } else {
-                canAddDecimal = false
-                canAddOperation = true
-            }
-            currentExpression.add(" " + view.text + " ")
-            binding.tvCurrent.text = currentExpression.joinToString("")
+            viewModel.onBracket(view.text as String)
         }
     }
 
     fun clickNumber(view: View) {
         if (view is Button) {
-            if (view.text == ".") {
-                if (canAddDecimal) {
-                    currentExpression.add("" + view.text)
-                }
-                canAddDecimal = false
-            } else {
-                currentExpression.add("" + view.text)
-            }
-            canAddOperation = true
+            viewModel.onNumber(view.text.toString())
         }
-        binding.tvCurrent.text = currentExpression.joinToString("")
     }
 
     fun clickOperation(view: View) {
-        if (view is Button && canAddOperation) {
-            Log.e("tag", view.text as String)
-            when (view.text) {
-                "+", "-", "/", "*", "^" -> {
-                    currentExpression.add(" " + view.text + " ")
-                }
-            }
-            binding.tvCurrent.text = currentExpression.joinToString("")
-            canAddOperation = false
-            canAddDecimal = true
+        if (view is Button) {
+            viewModel.onOperation(view.text.toString())
         }
     }
 
     fun clickSqrt(view: View) {
         if (view is Button) {
-            currentExpression.add(" " + view.text + " ")
+            viewModel.onSqrt(view.text.toString())
         }
-        binding.tvCurrent.text = currentExpression.joinToString("")
-        canAddOperation = false
-        canAddDecimal = true
-    }
-
-    fun checkErrorBracket(sb: MutableList<String>): Boolean {
-        val comp1 = sb.filter {
-            it == " ( "
-        }.size
-        val comp2 = sb.filter {
-            it == " ) "
-        }.size
-        return comp1 == comp2
     }
 
     fun clickEquals(view: View) {
-        if (!checkErrorBracket(currentExpression)) {
-            Toast.makeText(this, "error Bracket expression ", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        val tempString = currentExpression.joinToString("")
-        val items = tempString.trim().split("\\s+".toRegex())
-
-        val RPN = ShuntingYard().caculShuntingYard(items)
-        try {
-            val end = rpnToResult(RPN)
-            binding.tvResult.text = end
-            end?.let {
-                insertToDB(tempString, end)
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, "error expression", Toast.LENGTH_SHORT).show()
-        }
+        viewModel.onEquals()
 //       val test = powerStrings("2","12345")
 //        Log.e("test",test)
 //        Log.e("test",test.length.toString())
-
     }
 
-    private fun insertToDB(tempString: String, end: String) {
-        viewModel?.getCount(history = History(tempString, end))
-    }
+
 
     fun clickClear(view: View) {
-        binding.tvResult.text = ""
-        binding.tvCurrent.text = ""
-        currentExpression.clear()
-        canAddDecimal = true
-        canAddOperation = false
+        viewModel.onClear()
+
     }
 
     fun clickUndo(view: View) {
-        // if last = number -1 // last = operation -3
-        if (currentExpression.size - 1 >= 0) {
-            currentExpression.removeLast()
-        }
-        binding.tvCurrent.text = currentExpression.joinToString("")
+       viewModel.onUndo()
     }
 
     fun clickShowHistory(view: View) {
